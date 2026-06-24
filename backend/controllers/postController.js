@@ -1,5 +1,7 @@
 const Post = require("../models/Post");
 
+// ================= CREATE POST =================
+
 const createPost = async (req, res) => {
 
   try {
@@ -7,7 +9,7 @@ const createPost = async (req, res) => {
     const { caption, image, scheduledTime } = req.body;
 
     const post = await Post.create({
-      user: req.user,
+      user: req.user.id,
       caption,
       image,
       scheduledTime
@@ -28,15 +30,14 @@ const createPost = async (req, res) => {
 
 };
 
-module.exports = {
-  createPost
-};
+// ================= GET MY POSTS =================
+
 const getMyPosts = async (req, res) => {
 
   try {
 
     const posts = await Post.find({
-      user: req.user
+      user: req.user.id
     });
 
     res.status(200).json(posts);
@@ -51,10 +52,7 @@ const getMyPosts = async (req, res) => {
 
 };
 
-module.exports = {
-  createPost,
-  getMyPosts
-};
+// ================= DELETE POST =================
 
 const deletePost = async (req, res) => {
 
@@ -70,7 +68,7 @@ const deletePost = async (req, res) => {
     }
 
     // check ownership
-    if (post.user.toString() !== req.user) {
+    if (post.user.toString() !== req.user.id) {
       return res.status(401).json({
         message: "Not authorized"
       });
@@ -92,11 +90,7 @@ const deletePost = async (req, res) => {
 
 };
 
-module.exports = {
-  createPost,
-  getMyPosts,
-  deletePost
-};
+// ================= UPDATE POST =================
 
 const updatePost = async (req, res) => {
 
@@ -114,7 +108,7 @@ const updatePost = async (req, res) => {
     }
 
     // check ownership
-    if (post.user.toString() !== req.user) {
+    if (post.user.toString() !== req.user.id) {
       return res.status(401).json({
         message: "Not authorized"
       });
@@ -141,6 +135,8 @@ const updatePost = async (req, res) => {
   }
 
 };
+
+// ================= EXPORTS =================
 
 module.exports = {
   createPost,

@@ -1,67 +1,101 @@
 const express = require("express");
 
+const axios = require("axios");
+
 const router = express.Router();
-
-const OpenAI = require("openai");
-
-const openai = new OpenAI({
-
-  apiKey: process.env.OPENAI_API_KEY
-
-});
 
 // ================= AI CAPTION =================
 
-router.post("/generate-caption", async (req, res) => {
+router.post(
+"/generate-caption",
 
-  try {
+async (req, res) => {
 
-    const { prompt } = req.body;
 
-    const completion =
-      await openai.chat.completions.create({
+try {
 
-        model: "gpt-3.5-turbo",
+  const { prompt } = req.body;
+
+  const response =
+    await axios.post(
+
+      "https://api.x.ai/v1/chat/completions",
+
+      {
+
+        model: "grok-beta",
 
         messages: [
 
           {
             role: "system",
+
             content:
               "You are a social media caption generator."
           },
 
           {
             role: "user",
+
             content:
               `Generate a catchy Instagram caption for: ${prompt}`
           }
 
         ],
 
-        max_tokens: 60
+        temperature: 0.8
 
-      });
+      },
 
-    const caption =
-      completion.choices[0].message.content;
+      {
 
-    res.status(200).json({
+        headers: {
 
-      caption
+          Authorization:
+            `Bearer ${process.env.GROK_API_KEY}`,
 
-    });
+          "Content-Type":
+            "application/json"
 
-  } catch (error) {
+        }
 
-    res.status(500).json({
+      }
 
-      message: error.message
+    );
 
-    });
+  const caption =
+    response.data.choices[0]
+    .message.content;
 
-  }
+  res.status(200).json({
+
+    caption
+
+  });
+
+} catch (error) {
+
+console.log(
+error.response?.data
+|| error.message
+);
+
+res.status(500).json({
+
+
+message:
+  error.response?.data
+  || "AI Caption Failed"
+
 
 });
+
+}
+
+
+
+}
+
+);
 
 module.exports = router;

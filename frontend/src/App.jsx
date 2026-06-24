@@ -1,41 +1,33 @@
-import {
-  BrowserRouter,
-  Routes,
-  Route,
-  Navigate
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { AnimatePresence } from "framer-motion";
 import ForgotPassword from "./pages/ForgotPassword";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
-
 import ProtectedRoute from "./components/ProtectedRoute";
 import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
+import Chat from "./pages/Chat";
+import RoleSelection from "./pages/RoleSelection";
 
-function App() {
+function AnimatedRoutes() {
+  const location = useLocation();
 
   return (
-
-    <BrowserRouter>
-
-      <Routes>
-
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route
-          path="/"
-          element={<Navigate to="/login" />}
+          path="/role-selection"
+          element={
+            <ProtectedRoute>
+              <RoleSelection />
+            </ProtectedRoute>
+          }
         />
-
-        <Route
-          path="/login"
-          element={<Login />}
-        />
-
-        <Route
-          path="/register"
-          element={<Register />}
-        />
-
         <Route
           path="/dashboard"
           element={
@@ -44,35 +36,42 @@ function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
-  path="/profile"
-  element={
-    <ProtectedRoute>
-      <Profile />
-    </ProtectedRoute>
-  }
-/>
-<Route
-  path="/forgot-password"
-  element={<ForgotPassword />}
-/>
-
-<Route
-  path="/admin"
-  element={
-    <ProtectedRoute>
-      <Admin />
-    </ProtectedRoute>
-  }
-/>
-
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute requireRole="admin">
+              <Admin />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <Chat />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
-
-    </BrowserRouter>
-
+    </AnimatePresence>
   );
+}
 
+function App() {
+
+  return (
+    <BrowserRouter>
+      <AnimatedRoutes />
+    </BrowserRouter>
+  );
 }
 
 export default App;

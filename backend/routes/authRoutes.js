@@ -2,13 +2,14 @@ const express = require("express");
 
 const router = express.Router();
 
-
-
 const {
   registerUser,
   loginUser,
-  forgotPassword
+  forgotPassword,
+  selectRole
 } = require("../controllers/authController");
+
+const authMiddleware = require("../middleware/authMiddleware");
 
 // REGISTER
 
@@ -29,5 +30,12 @@ router.put(
   forgotPassword
 );
 
+// SELECT ROLE
+
+router.post(
+  "/select-role",
+  authMiddleware,
+  selectRole
+);
 
 module.exports = router;

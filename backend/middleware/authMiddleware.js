@@ -21,8 +21,8 @@ const protect = async (req, res, next) => {
         process.env.JWT_SECRET
       );
 
-      // save user id in request
-      req.user = decoded.id;
+      // save user data in request
+      req.user = decoded;
 
       next();
 

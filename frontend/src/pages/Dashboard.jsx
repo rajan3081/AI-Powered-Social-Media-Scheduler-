@@ -11,12 +11,14 @@ import { useDropzone } from "react-dropzone";
 
 import { toast } from "react-toastify";
 
+
 function Dashboard() {
 
     const [notifications, setNotifications] = useState([]);
     const [activities, setActivities] = useState([]);
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const [posts, setPosts] = useState([]);
 
@@ -33,10 +35,16 @@ function Dashboard() {
   const [filterStatus, setFilterStatus] = useState("all");
 
   const [formData, setFormData] = useState({
-    caption: "",
-    image: "",
-    scheduledTime: ""
-  });
+
+  caption: "",
+
+  image: "",
+
+  scheduledTime: "",
+
+  platform: "Instagram"
+
+});
 
   const [editData, setEditData] = useState({
     caption: "",
@@ -158,7 +166,8 @@ const addActivity = (message) => {
       setFormData({
         caption: "",
         image: "",
-        scheduledTime: ""
+        scheduledTime: "",
+        platform: "Instagram"
       });
 
     } catch (error) {
@@ -429,8 +438,10 @@ const {
       {/* SIDEBAR */}
 
       <Sidebar
-      sidebarOpen={sidebarOpen}
-  setSidebarOpen={setSidebarOpen}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        sidebarCollapsed={sidebarCollapsed}
+        setSidebarCollapsed={setSidebarCollapsed}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
         activeSection={activeSection}
@@ -440,15 +451,21 @@ const {
       {/* MAIN */}
 
       <motion.div
-        className="ml-72"
+        className={`transition-all duration-500 ${sidebarCollapsed ? "md:ml-20" : "md:ml-72"} ml-0`}
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5 }}
       >
 
         <Navbar
-  setSidebarOpen={setSidebarOpen}
-/>
+          setSidebarOpen={setSidebarOpen}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          darkMode={darkMode}
+          setDarkMode={setDarkMode}
+          notificationCount={notifications.length}
+          userName={JSON.parse(localStorage.getItem("user"))?.name || "Manager"}
+        />
 
         <div
   className={`
@@ -593,16 +610,16 @@ const {
   ${
     darkMode
       ? "bg-white/10 text-white"
-      : "bg-white/60 text-black"
+      : "bg-white/60 text-slate-950"
   }
 `}>
 
-  <h2 className="
+  <h2 className={`
     text-2xl
     font-bold
     mb-5
-    text-black
-  ">
+    ${darkMode ? "text-white" : "text-slate-950"}
+  `}>
     Notifications 🔔
   </h2>
 
@@ -622,7 +639,7 @@ const {
           <div
             key={notification.id}
             className="
-             bg-gradient-to-br from-blue-200 via-purple-200 to-pink-200
+             bg-linear-to-br from-blue-200 via-purple-200 to-pink-200
               p-4
               rounded-2xl
               text-black
@@ -863,6 +880,34 @@ const {
     />
   )
 }
+<select
+  name="platform"
+  value={formData.platform}
+  onChange={handleChange}
+  className="
+    w-full
+    border
+    border-gray-300
+    rounded-2xl
+    px-5
+    py-4
+    text-black
+  "
+>
+
+  <option>
+    Instagram
+  </option>
+
+  <option>
+    LinkedIn
+  </option>
+
+  <option>
+    Facebook
+  </option>
+
+</select>
 
 {/* DATE TIME */}
 
@@ -995,7 +1040,7 @@ const {
                       justify-center
                       h-60
                       rounded-3xl
-                      bg-gradient-to-r
+                      bg-linear-to-r
                       from-blue-500
                       to-purple-600
                       text-white
@@ -1062,6 +1107,15 @@ const {
                               <h2 className="text-2xl font-bold">
                                 {post.caption}
                               </h2>
+                              <p className="
+  mt-3
+  text-sm
+  font-semibold
+  text-blue-500
+">
+  Scheduled for:
+  {post.platform} 🚀
+</p>
 
                               <span
                                 className={`

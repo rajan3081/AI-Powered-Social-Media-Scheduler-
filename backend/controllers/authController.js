@@ -57,7 +57,9 @@ const registerUser = async (req, res) => {
 
         name: user.name,
 
-        email: user.email
+        email: user.email,
+
+        role: user.role
 
       }
 
@@ -115,8 +117,11 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
 
       {
-        id: user._id
+        id: user._id,
+        role: user.role
       },
+
+
 
       process.env.JWT_SECRET,
 
@@ -140,7 +145,9 @@ const loginUser = async (req, res) => {
 
         name: user.name,
 
-        email: user.email
+        email: user.email,
+
+        role: user.role
 
       }
 
@@ -199,18 +206,84 @@ const forgotPassword = async (req, res) => {
 
 };
 
+// ================= SELECT ROLE =================
+
+const selectRole = async (req, res) => {
+
+  try {
+
+    const { role } = req.body;
+
+    const userId = req.user.id;
+
+    // VALIDATE ROLE
+
+    if (!["admin", "customer"].includes(role)) {
+
+      return res.status(400).json({
+        message: "Invalid role"
+      });
+
+    }
+
+    // UPDATE USER ROLE
+
+    const user = await User.findByIdAndUpdate(
+
+      userId,
+
+      { role },
+
+      { new: true }
+
+    );
+
+    if (!user) {
+
+      return res.status(404).json({
+        message: "User not found"
+      });
+
+    }
+
+    res.status(200).json({
+
+      message: "Role selected successfully",
+
+      user: {
+
+        id: user._id,
+
+        name: user.name,
+
+        email: user.email,
+
+        role: user.role
+
+      }
+
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: error.message
+    });
+
+  }
+
+};
+
 // ================= EXPORTS =================
 
 module.exports = {
 
   registerUser,
 
-  loginUser
-
-};
-
-module.exports = {
-  registerUser,
   loginUser,
-  forgotPassword
+
+  forgotPassword,
+
+  selectRole
+
 };

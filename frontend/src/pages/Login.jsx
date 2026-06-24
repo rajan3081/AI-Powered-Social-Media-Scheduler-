@@ -72,7 +72,7 @@ function Login() {
 
       toast.success("Login Successful 🚀");
 
-      navigate("/dashboard");
+      navigate("/role-selection");
 
     } catch (error) {
 

@@ -1,75 +1,149 @@
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer
+BarChart,
+Bar,
+XAxis,
+YAxis,
+Tooltip,
+ResponsiveContainer,
+PieChart,
+Pie
 } from "recharts";
 
-function Analytics({ posts }) {
+function Analytics({ posts = [] }) {
 
-  const data = [
-    {
-      name: "Published",
-      value: posts.filter(
-        (post) => post.status === "published"
-      ).length
-    },
-    {
-      name: "Scheduled",
-      value: posts.filter(
-        (post) => post.status !== "published"
-      ).length
-    }
-  ];
+// BAR CHART DATA
 
-  return (
+const data = [
 
-    <div className="
-      bg-white
-      dark:bg-gray-800
-      rounded-3xl
-      shadow-2xl
-      p-6
-      mb-10
-    ">
+{
+  name: "Published",
+  value: posts.filter(
+    (post) =>
+      post?.status === "published"
+  ).length
+},
 
-      <h2 className="
-        text-3xl
-        font-bold
-        mb-8
-      ">
-        Analytics 📊
-      </h2>
+{
+  name: "Scheduled",
+  value: posts.filter(
+    (post) =>
+      post?.status !== "published"
+  ).length
+}
 
-      <div className="h-80">
+];
 
-        <ResponsiveContainer width="100%" height="100%">
+// PIE CHART DATA
 
-          <BarChart data={data}>
+const pieData = [
 
-            <XAxis dataKey="name" />
+{
+  name: "Instagram",
+  value: posts.filter(
+    (post) =>
+      post?.platform === "Instagram"
+  ).length
+},
 
-            <YAxis />
+{
+  name: "LinkedIn",
+  value: posts.filter(
+    (post) =>
+      post?.platform === "LinkedIn"
+  ).length
+},
 
-            <Tooltip />
+{
+  name: "Facebook",
+  value: posts.filter(
+    (post) =>
+      post?.platform === "Facebook"
+  ).length
+}
 
-            <Bar
-              dataKey="value"
-              fill="#3b82f6"
-              radius={[10, 10, 0, 0]}
-            />
+];
 
-          </BarChart>
+return (
 
-        </ResponsiveContainer>
+<div className="
+  bg-white
+  dark:bg-gray-800
+  rounded-3xl
+  shadow-2xl
+  p-6
+  mb-10
+">
 
-      </div>
+  <h2 className="
+    text-3xl
+    font-bold
+    mb-8
+  ">
+    Analytics 📊
+  </h2>
 
-    </div>
+  {/* BAR CHART */}
 
-  );
+  <div className="h-80">
+
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+    >
+
+      <BarChart data={data}>
+
+        <XAxis dataKey="name" />
+
+        <YAxis />
+
+        <Tooltip />
+
+        <Bar
+          dataKey="value"
+          fill="#3b82f6"
+        />
+
+      </BarChart>
+
+    </ResponsiveContainer>
+
+  </div>
+
+  {/* PIE CHART */}
+
+  <div className="
+    h-96
+    mt-10
+  ">
+
+    <ResponsiveContainer
+      width="100%"
+      height="100%"
+    >
+
+      <PieChart>
+
+        <Pie
+          data={pieData}
+          dataKey="value"
+          nameKey="name"
+          outerRadius={120}
+          fill="#8884d8"
+          label
+        />
+
+        <Tooltip />
+
+      </PieChart>
+
+    </ResponsiveContainer>
+
+  </div>
+
+</div>
+
+);
 
 }
 
